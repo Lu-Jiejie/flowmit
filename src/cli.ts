@@ -215,7 +215,7 @@ export async function runCli() {
   if (!toCommit)
     handleExit()
 
-  stageFiles(commitFiles.map(({ file }) => file)) && commit(commitMessage) ? handleSuccess('提交成功') : handleError('提交失败')
+  stageFiles(toStageFiles.map(({ file }) => file)) && commit(commitMessage) ? handleSuccess('提交成功') : handleError('提交失败')
 }
 
 function clearConsole() {
