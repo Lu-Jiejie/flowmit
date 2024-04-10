@@ -100,7 +100,8 @@ export async function runCli() {
         min: 1,
         choices: unstagedFiles.map(({ file, status }) => ({
           title: `${formatStatus(status)} ${file}`,
-          value: { file, status }
+          value: { file, status },
+          selected: true
         })),
         onState({ aborted }) {
           if (aborted) {
