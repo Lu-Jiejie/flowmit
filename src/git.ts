@@ -1,5 +1,8 @@
-import { isUndefined } from '@lu-jiejie/utils'
 import { execCommand } from './utils'
+
+function isUndefined(value: any) {
+  return typeof value === 'undefined'
+}
 
 export function isGitInstalled() {
   return !isUndefined(execCommand('git --version'))
