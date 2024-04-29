@@ -22,7 +22,7 @@
     }
   },
   "bin": {
-    "fm": "./dist/index.cjs"
+    "fm": "./bin/cli.mjs"
   },
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
