@@ -4,14 +4,14 @@
   "version": "0.0.6",
   "packageManager": "pnpm@9.0.6",
   "description": "help you commit more smoothly",
-  "author": "LU-JIEJIE",
+  "author": "Lu-Jiejie <lu-jiejie@outlook.com>",
   "license": "MIT",
-  "homepage": "https://github.com/LU-JIEJIE/flowmit#readme",
+  "homepage": "https://github.com/Lu-Jiejie/flowmit#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LU-JIEJIE/flowmit.git"
+    "url": "git+https://github.com/Lu-Jiejie/flowmit.git"
   },
-  "bugs": "https://github.com/LU-JIEJIE/flowmit/issues",
+  "bugs": "https://github.com/Lu-Jiejie/flowmit/issues",
   "keywords": [],
   "sideEffects": false,
   "exports": {
@@ -64,6 +64,7 @@
     "vitest": "^1.5.2"
   },
   "dependencies": {
+    "cac": "^6.7.14",
     "picocolors": "^1.0.0",
     "prompts": "^2.4.2"
   },
