@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import prompts from 'prompts'
 import pc from 'picocolors'
 import type { FileInfo } from './git'
@@ -24,7 +25,7 @@ export async function handleCommit() {
           handleError('\n程序中断')
           handleExit()
         }
-      }
+      },
     }) as { toInit: boolean }
 
     !toInit && handleExit()
@@ -79,7 +80,7 @@ export async function handleCommit() {
           handleError('\n程序中断')
           handleExit()
         }
-      }
+      },
     }) as { toStage: boolean }
 
     console.log()
@@ -99,14 +100,14 @@ export async function handleCommit() {
         choices: unstagedFiles.map(({ file, status }) => ({
           title: `${formatStatus(status)} ${file}`,
           value: { file, status },
-          selected: true
+          selected: true,
         })),
         onState({ aborted }) {
           if (aborted) {
             handleError('\n程序中断')
             handleExit()
           }
-        }
+        },
       })
       : { seletedFiles: [] }
     console.log()
@@ -130,14 +131,14 @@ export async function handleCommit() {
       { title: 'test', value: 'test', description: '修改测试用例' },
       { title: 'build', value: 'build', description: '修改构建配置' },
       { title: 'chore', value: 'chore', description: '构建过程或辅助工具的变动' },
-      { title: 'revert', value: 'revert', description: '回滚某个更早的提交' }
+      { title: 'revert', value: 'revert', description: '回滚某个更早的提交' },
     ],
     onState({ aborted }) {
       if (aborted) {
         handleError('\n程序中断')
         handleExit()
       }
-    }
+    },
   })
   console.log()
 
@@ -151,7 +152,7 @@ export async function handleCommit() {
         handleError('\n程序中断')
         handleExit()
       }
-    }
+    },
   }) as { toFillScope: boolean }
   toFillScope && console.log()
 
@@ -166,7 +167,7 @@ export async function handleCommit() {
           handleError('\n程序中断')
           handleExit()
         }
-      }
+      },
     }) as { scope: string }
     : { scope: '' }
 
@@ -182,7 +183,7 @@ export async function handleCommit() {
         handleError('\n程序中断')
         handleExit()
       }
-    }
+    },
   }) as { description: string }
   console.log()
 
@@ -208,7 +209,7 @@ export async function handleCommit() {
         handleError('\n程序中断')
         handleExit()
       }
-    }
+    },
   }) as { toCommit: boolean }
 
   if (!toCommit)

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { describe, expect, it } from 'vitest'
 import { execCommand } from '../src/utils'
 

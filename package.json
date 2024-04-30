@@ -21,9 +21,6 @@
       "require": "./dist/index.cjs"
     }
   },
-  "bin": {
-    "fm": "./bin/cli.mjs"
-  },
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -34,6 +31,9 @@
         "./dist/index.d.ts"
       ]
     }
+  },
+  "bin": {
+    "fm": "./bin/cli.mjs"
   },
   "files": [
     "dist"
@@ -49,6 +49,11 @@
     "prepublishOnly": "nr build",
     "prepare": "simple-git-hooks"
   },
+  "dependencies": {
+    "cac": "^6.7.14",
+    "picocolors": "^1.0.0",
+    "prompts": "^2.4.2"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "^2.16.0",
     "@types/node": "^20.12.7",
@@ -62,11 +67,6 @@
     "typescript": "^5.4.5",
     "unbuild": "^2.0.0",
     "vitest": "^1.5.2"
-  },
-  "dependencies": {
-    "cac": "^6.7.14",
-    "picocolors": "^1.0.0",
-    "prompts": "^2.4.2"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged"
