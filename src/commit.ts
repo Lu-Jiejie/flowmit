@@ -1,9 +1,8 @@
-/* eslint-disable no-console */
 import prompts from 'prompts'
 import pc from 'picocolors'
-import type { FileInfo } from './git'
 import { commit, getBranchName, getStagedFiles, getUnstagedFiles, initGitRepository, isGitInstalled, isInGitRepository, stageFiles } from './git'
-import { formatStatus, handleError, handleExit, handleSuccess, handleWarn } from './utils'
+import { formatStatus, handleError, handleExit, handleSuccess, handleWarn } from './handler'
+import type { FileInfo } from './types'
 
 export async function handleCommit() {
   // 检查 Git 是否安装

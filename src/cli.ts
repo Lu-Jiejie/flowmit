@@ -1,10 +1,20 @@
+import process from 'node:process'
+import { homedir } from 'node:os'
 import { handleCommit } from './commit'
-import { handleError, handleExit } from './utils'
+import { handleHelp, handleVersion } from './handler'
+import { parseArgs } from './parse'
 
-try {
-  handleCommit()
+export async function runCli() {
+  const parsedArgv = parseArgs(process.argv.slice(2))
+
+  if (parsedArgv.version)
+    console.log(handleVersion())
+
+  else if (parsedArgv.help)
+    console.log(handleHelp())
+
+  else
+    handleCommit()
 }
-catch {
-  handleError('程序中断')
-  handleExit()
-}
+
+runCli()

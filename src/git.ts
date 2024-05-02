@@ -1,3 +1,4 @@
+import type { FileInfo } from './types'
 import { execCommand } from './utils'
 
 function isUndefined(value: any) {
@@ -15,13 +16,6 @@ export function isInGitRepository() {
 export function initGitRepository() {
   return !isUndefined(execCommand('git init -b main'))
 }
-
-export interface FileInfo {
-  file: string
-  status: FileStatus
-}
-
-export type FileStatus = 'A' | 'U' | 'M' | 'D'
 
 export function getUntrackedFiles(): FileInfo[] {
   const result = execCommand('git ls-files --others --exclude-standard')
