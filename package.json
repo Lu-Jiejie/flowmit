@@ -43,11 +43,12 @@
     "build": "unbuild",
     "lint": "eslint .",
     "release": "bumpp && npm publish",
-    "start": "esno src/cli/index.ts",
+    "start": "esno src/index.ts",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "nr build",
-    "prepare": "simple-git-hooks"
+    "prepare": "simple-git-hooks",
+    "cli": "esno src/cli.ts"
   },
   "dependencies": {
     "minimist": "^1.2.8",
