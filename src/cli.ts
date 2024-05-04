@@ -27,18 +27,18 @@ export async function runCommitCli() {
 
   // check if git is installed
   if (!isGitInstalled()) {
-    console.log(formatWarning(config.messages.gitNotInstalled))
+    console.log(formatWarning(config.messages.Message_GitNotInstalled))
     process.exit(0)
   }
 
   // check if in git repository
   if (!isInGitRepository()) {
-    console.log(formatWarning(config.messages.notGitRepo))
+    console.log(formatWarning(config.messages.Message_NotGitRepo))
     console.log()
     const { toInit } = await prompts({
       type: 'confirm',
       name: 'toInit',
-      message: config.messages.confirmInitGitRepo,
+      message: config.messages.Prompts_ConfirmInitGitRepo,
       initial: true,
       onState({ aborted }) {
         aborted && exitWithErrorInterrupted()
@@ -49,23 +49,23 @@ export async function runCommitCli() {
 
     initGitRepository()
     console.log()
-    console.log(formatSuccess(config.messages.initGitRepoSuccess))
+    console.log(formatSuccess(config.messages.Message_InitGitRepoSuccess))
     console.log()
   }
 
-  const branchName = getBranchName() || config.messages.detachedHead
+  const branchName = getBranchName() || 'Detached HEAD'
   const stagedFiles = getStagedFiles()
   const unstagedFiles = getUnstagedFiles()
 
   if (!unstagedFiles.length && !stagedFiles.length)
-    exitWithError(config.messages.noChangesToCommit)
+    exitWithError(config.messages.Message_NoChangesToCommit)
 
-  console.log(formatTitle(config.messages.currentBranch))
+  console.log(formatTitle(config.messages.Title_CurrentBranch))
   console.log(`${INDENT}${branchName}`)
   console.log()
 
   if (stagedFiles.length) {
-    console.log(formatTitle(config.messages.stagedChanges))
+    console.log(formatTitle(config.messages.Title_StagedChanges))
     stagedFiles.forEach((file) => {
       console.log(INDENT + formatFileStatus(file))
     })
@@ -73,7 +73,7 @@ export async function runCommitCli() {
   }
 
   if (unstagedFiles.length) {
-    console.log(formatTitle(config.messages.unstagedChanges))
+    console.log(formatTitle(config.messages.Title_UnstagedChanges))
     unstagedFiles.forEach((file) => {
       console.log(INDENT + formatFileStatus(file))
     })
@@ -84,15 +84,15 @@ export async function runCommitCli() {
 
   if (unstagedFiles.length) {
     if (stagedFiles.length)
-      console.log(formatWarning(config.messages.hasUnstagedChanges))
+      console.log(formatWarning(config.messages.Message_HasUnstagedChanges))
     else
-      console.log(formatWarning(config.messages.hasUnstagedChangesButEmptyStage))
+      console.log(formatWarning(config.messages.Message_HasUnstagedChangesButEmptyStage))
     console.log()
 
     const { toStage } = await prompts({
       type: 'confirm',
       name: 'toStage',
-      message: config.messages.confirmStageChanges,
+      message: config.messages.Prompts_ConfirmStageChanges,
       initial: true,
       onState({ aborted }) {
         aborted && exitWithError('')
@@ -101,13 +101,13 @@ export async function runCommitCli() {
 
     console.log()
     if (!toStage && !stagedFiles.length)
-      exitWithError(config.messages.emptyStage)
+      exitWithError(config.messages.Message_EmptyStage)
 
     const { seletedFiles } = toStage
       ? await prompts({
         type: 'multiselect',
         name: 'seletedFiles',
-        message: config.messages.selectChangesToStage,
+        message: config.messages.Prompts_SelectChangesToStage,
         instructions: false,
         min: 1,
         choices: unstagedFiles.map(file => ({
@@ -128,7 +128,7 @@ export async function runCommitCli() {
   const { commitType } = await prompts({
     type: 'select',
     name: 'commitType',
-    message: config.messages.selectCommitType,
+    message: config.messages.Prompts_SelectCommitType,
     instructions: false,
     choices: config.types,
     onState({ aborted }) {
@@ -140,7 +140,7 @@ export async function runCommitCli() {
   let { scope } = await prompts({
     type: 'select',
     name: 'scope',
-    message: config.messages.selectScope,
+    message: config.messages.Prompts_SelectScope,
     choices: [
       ...config.scopes.map(scope => ({ title: scope, value: scope })),
       { title: '──────────', heading: true },
@@ -157,7 +157,7 @@ export async function runCommitCli() {
     const { customScope } = await prompts({
       type: 'text',
       name: 'customScope',
-      message: config.messages.enterCustomScope,
+      message: config.messages.Prompts_EnterCustomScope,
       initial: '',
       onState({ aborted }) {
         aborted && exitWithErrorInterrupted()
@@ -170,9 +170,9 @@ export async function runCommitCli() {
   const { description } = await prompts({
     type: 'text',
     name: 'description',
-    message: config.messages.enterDescription,
+    message: config.messages.Prompts_EnterDescription,
     initial: '',
-    validate: (value: string) => value.trim() !== '' || config.messages.enterDescriptionValidation,
+    validate: (value: string) => value.trim() !== '' || config.messages.Validation_EnterDescription,
     onState({ aborted }) {
       aborted && exitWithErrorInterrupted()
     },
@@ -182,10 +182,10 @@ export async function runCommitCli() {
   const commitMessage = `${commitType}${scope ? `(${scope})` : ''}: ${description}`
   const commitFiles = [...stagedFiles, ...toStageFiles]
 
-  console.log(formatTitle(config.messages.commitMessage))
+  console.log(formatTitle(config.messages.Title_CommitMessage))
   console.log(pc.dim(commitMessage))
   console.log()
-  console.log(formatTitle(config.messages.commitChanges))
+  console.log(formatTitle(config.messages.Title_CommitChanges))
   commitFiles.forEach((file) => {
     console.log(formatFileStatus(file))
   })
@@ -194,7 +194,7 @@ export async function runCommitCli() {
   const { toCommit } = await prompts({
     type: 'confirm',
     name: 'toCommit',
-    message: config.messages.confirmCommit,
+    message: config.messages.Prompts_ConfirmCommit,
     initial: true,
     onState({ aborted }) {
       aborted && exitWithErrorInterrupted()

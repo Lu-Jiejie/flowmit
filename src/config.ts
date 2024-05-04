@@ -17,88 +17,85 @@ export const defaultTypes = [
   { title: 'revert', value: 'revert', description: 'Revert a previous commit' },
 ]
 
-export interface Messages {
-  gitNotInstalled: string
+export interface I18N {
+  Message_GitNotInstalled: string
 
-  notGitRepo: string
-  confirmInitGitRepo: string
-  initGitRepoSuccess: string
+  Message_NotGitRepo: string
+  Prompts_ConfirmInitGitRepo: string
+  Message_InitGitRepoSuccess: string
 
-  noChangesToCommit: string
+  Message_NoChangesToCommit: string
 
-  currentBranch: string
-  detachedHead: string
+  Title_CurrentBranch: string
 
-  stagedChanges: string
-  unstagedChanges: string
+  Title_StagedChanges: string
+  Title_UnstagedChanges: string
 
-  hasUnstagedChanges: string
-  hasUnstagedChangesButEmptyStage: string
-  confirmStageChanges: string
-  emptyStage: string
+  Message_HasUnstagedChanges: string
+  Message_HasUnstagedChangesButEmptyStage: string
+  Prompts_ConfirmStageChanges: string
+  Message_EmptyStage: string
 
-  selectChangesToStage: string
+  Prompts_SelectChangesToStage: string
 
-  selectCommitType: string
-  selectScope: string
-  enterCustomScope: string
-  enterDescription: string
-  enterDescriptionValidation: string
+  Prompts_SelectCommitType: string
+  Prompts_SelectScope: string
+  Prompts_EnterCustomScope: string
+  Prompts_EnterDescription: string
+  Validation_EnterDescription: string
 
-  commitMessage: string
-  commitChanges: string
+  Title_CommitMessage: string
+  Title_CommitChanges: string
 
-  confirmCommit: string
+  Prompts_ConfirmCommit: string
 }
 
-export const cnMessages: Messages = {
-  gitNotInstalled: '未检测到 git，请先安装 git',
-  notGitRepo: '当前目录不是 git 仓库，请先初始化 git 仓库',
-  confirmInitGitRepo: '是否初始化 git 仓库？',
-  initGitRepoSuccess: '初始化 git 仓库成功',
-  noChangesToCommit: '没有需要提交的更改',
-  currentBranch: '当前分支',
-  detachedHead: '游离状态',
-  stagedChanges: '暂存的更改',
-  unstagedChanges: '未暂存的更改',
-  hasUnstagedChanges: '当前有未暂存的更改',
-  hasUnstagedChangesButEmptyStage: '暂存区为空，但有未暂存的更改',
-  confirmStageChanges: '需要暂存某些文件的更改吗？',
-  emptyStage: '暂存区为空，无需提交',
-  selectChangesToStage: '请选择需要暂存的更改',
-  selectCommitType: '请选择提交类型',
-  selectScope: '请选择本次提交的作用域',
-  enterCustomScope: '请输入自定义作用域',
-  enterDescription: '请输入本次提交的描述',
-  enterDescriptionValidation: '描述不能为空',
-  commitMessage: '提交信息',
-  commitChanges: '提交更改',
-  confirmCommit: '确认提交？',
+export const ZH: I18N = {
+  Message_GitNotInstalled: '未检测到 git，请先安装 git',
+  Message_NotGitRepo: '当前目录不是 git 仓库，请先初始化 git 仓库',
+  Prompts_ConfirmInitGitRepo: '是否初始化 git 仓库？',
+  Message_InitGitRepoSuccess: '初始化 git 仓库成功',
+  Message_NoChangesToCommit: '没有需要提交的更改',
+  Title_CurrentBranch: '当前分支',
+  Title_StagedChanges: '暂存的更改',
+  Title_UnstagedChanges: '未暂存的更改',
+  Message_HasUnstagedChanges: '当前有未暂存的更改',
+  Message_HasUnstagedChangesButEmptyStage: '暂存区为空，但有未暂存的更改',
+  Prompts_ConfirmStageChanges: '需要暂存某些文件的更改吗？',
+  Message_EmptyStage: '暂存区为空，无需提交',
+  Prompts_SelectChangesToStage: '请选择需要暂存的更改',
+  Prompts_SelectCommitType: '请选择提交类型',
+  Prompts_SelectScope: '请选择本次提交的作用域',
+  Prompts_EnterCustomScope: '请输入自定义作用域',
+  Prompts_EnterDescription: '请输入本次提交的描述',
+  Validation_EnterDescription: '描述不能为空',
+  Title_CommitMessage: '提交信息',
+  Title_CommitChanges: '提交更改',
+  Prompts_ConfirmCommit: '确认提交？',
 }
 
-export const enMessages: Messages = {
-  gitNotInstalled: 'Git is not installed. Please install Git first: https://git-scm.com/downloads',
-  notGitRepo: 'The current directory is not a Git repository. Please initialize a Git repository first.',
-  confirmInitGitRepo: 'Would you like to initialize a Git repository?',
-  initGitRepoSuccess: 'Git repository initialized successfully.',
-  noChangesToCommit: 'There are no changes to commit.',
-  currentBranch: 'Current branch',
-  detachedHead: 'Detached HEAD',
-  stagedChanges: 'Staged changes',
-  unstagedChanges: 'Unstaged changes',
-  hasUnstagedChanges: 'There are some unstaged changes.',
-  hasUnstagedChangesButEmptyStage: 'The stage is empty, but there are unstaged changes.',
-  confirmStageChanges: 'Would you like to stage some changes?',
-  emptyStage: 'The stage is empty, so there is no need to commit.',
-  selectChangesToStage: 'Please select the changes you want to stage',
-  selectCommitType: 'Please select the commit type',
-  selectScope: 'Please select the scope of this commit',
-  enterCustomScope: 'Please enter a custom scope',
-  enterDescription: 'Please enter the description of this commit',
-  enterDescriptionValidation: 'Description cannot be empty',
-  commitMessage: 'Commit message',
-  commitChanges: 'Commit changes',
-  confirmCommit: 'Confirm commit?',
+export const EN: I18N = {
+  Message_GitNotInstalled: 'Git is not installed. Please install Git first: https://git-scm.com/downloads',
+  Message_NotGitRepo: 'The current directory is not a Git repository. Please initialize a Git repository first.',
+  Prompts_ConfirmInitGitRepo: 'Would you like to initialize a Git repository?',
+  Message_InitGitRepoSuccess: 'Git repository initialized successfully.',
+  Message_NoChangesToCommit: 'There are no changes to commit.',
+  Title_CurrentBranch: 'Current branch',
+  Title_StagedChanges: 'Staged changes',
+  Title_UnstagedChanges: 'Unstaged changes',
+  Message_HasUnstagedChanges: 'There are some unstaged changes.',
+  Message_HasUnstagedChangesButEmptyStage: 'The stage is empty, but there are unstaged changes.',
+  Prompts_ConfirmStageChanges: 'Would you like to stage some changes?',
+  Message_EmptyStage: 'The stage is empty, so there is no need to commit.',
+  Prompts_SelectChangesToStage: 'Please select the changes you want to stage',
+  Prompts_SelectCommitType: 'Please select the commit type',
+  Prompts_SelectScope: 'Please select the scope of this commit',
+  Prompts_EnterCustomScope: 'Please enter a custom scope',
+  Prompts_EnterDescription: 'Please enter the description of this commit',
+  Validation_EnterDescription: 'Description cannot be empty',
+  Title_CommitMessage: 'Commit message',
+  Title_CommitChanges: 'Commit changes',
+  Prompts_ConfirmCommit: 'Confirm commit?',
 }
 
 export function defineConfig(config: Config) {
@@ -133,7 +130,7 @@ export async function getConfig() {
   const customConfig = await _getConfig()
   const config = {
     types: customConfig.types?.length ? customConfig.types : defaultTypes,
-    messages: customConfig.language === 'zh' ? cnMessages : enMessages,
+    messages: customConfig.language === 'zh' ? ZH : EN,
     scopes: customConfig.scopes || [],
   }
   return config
