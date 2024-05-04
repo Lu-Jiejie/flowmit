@@ -1,68 +1,81 @@
 import process from 'node:process'
-import { homedir } from 'node:os'
-import prompts from 'prompts'
+import prompts from 'prompts-plus'
 import pc from 'picocolors'
-import { formatStatus, handleError, handleExit, handleHelp, handleSuccess, handleVersion, handleWarn } from './handler'
+import { formatError, formatFileStatus, formatSuccess, formatTitle, formatWarning } from './format'
+import { generateHelp, generateVersion } from './generate'
 import { parseArgs } from './parse'
 import { commit, getBranchName, getStagedFiles, getUnstagedFiles, initGitRepository, isGitInstalled, isInGitRepository, stageFiles } from './git'
 import type { FileInfo } from './types'
 import { getConfig } from './config'
 
+function exitWithError(message: string) {
+  console.log()
+  console.log(formatError(message))
+  process.exit('0')
+}
+
+function exitWithErrorInterrupted() {
+  console.log()
+  exitWithError('Process interrupted. Exiting...')
+}
+
 export async function runCommitCli() {
+  const INDENT = '  '
+  const EMPTY_SCOPE = '###EMPTY###'
+  const CUSTOM_SCOPE = '###CUSTOM###'
   const config = await getConfig()
 
-  // 检查 Git 是否安装
+  // check if git is installed
   if (!isGitInstalled()) {
-    handleWarn('Git 未安装，请先安装 Git 后再试')
-    handleExit()
+    console.log(formatWarning(config.messages.gitNotInstalled))
+    process.exit(0)
   }
 
-  // 检查是否在 Git 仓库中
+  // check if in git repository
   if (!isInGitRepository()) {
-    handleWarn('当前目录不在 Git 仓库中，是否要在当前目录初始化 Git 仓库？/n')
+    console.log(formatWarning(config.messages.notGitRepo))
+    console.log()
     const { toInit } = await prompts({
       type: 'confirm',
       name: 'toInit',
-      message: '是否要在当前目录初始化 Git 仓库？',
+      message: config.messages.confirmInitGitRepo,
       initial: true,
       onState({ aborted }) {
-        if (aborted) {
-          handleError('\n程序中断')
-          handleExit()
-        }
+        aborted && exitWithErrorInterrupted()
       },
     }) as { toInit: boolean }
 
-    !toInit && handleExit()
+    !toInit && exitWithError('Refusing to initialize git repository. Exiting...')
 
     initGitRepository()
-    handleSuccess('\n初始化 Git 仓库成功\n')
+    console.log()
+    console.log(formatSuccess(config.messages.initGitRepoSuccess))
+    console.log()
   }
 
-  const branchName = getBranchName()
+  const branchName = getBranchName() || config.messages.detachedHead
   const stagedFiles = getStagedFiles()
   const unstagedFiles = getUnstagedFiles()
 
-  if (!unstagedFiles.length && !stagedFiles.length) {
-    handleError('当前没有需要提交的文件')
-    handleExit()
-  }
+  if (!unstagedFiles.length && !stagedFiles.length)
+    exitWithError(config.messages.noChangesToCommit)
 
-  console.log(pc.bold(pc.bgCyan('当前分支')))
-  console.log(`${pc.dim(branchName === '' ? '游离状态' : branchName)}\n`)
+  console.log(formatTitle(config.messages.currentBranch))
+  console.log(`${INDENT}${branchName}`)
+  console.log()
 
   if (stagedFiles.length) {
-    console.log(pc.bold(pc.bgCyan('暂存的更改')))
-    stagedFiles.forEach(({ file, status }) => {
-      console.log(`${pc.bold(formatStatus(status))} ${pc.dim(file)}`)
+    console.log(formatTitle(config.messages.stagedChanges))
+    stagedFiles.forEach((file) => {
+      console.log(INDENT + formatFileStatus(file))
     })
     console.log()
   }
 
   if (unstagedFiles.length) {
-    console.log(pc.bold(pc.bgCyan('更改')))
-    unstagedFiles.forEach(({ file, status }) => {
-      console.log(`${pc.bold(formatStatus(status))} ${pc.dim(file)}`)
+    console.log(formatTitle(config.messages.unstagedChanges))
+    unstagedFiles.forEach((file) => {
+      console.log(INDENT + formatFileStatus(file))
     })
     console.log()
   }
@@ -71,47 +84,39 @@ export async function runCommitCli() {
 
   if (unstagedFiles.length) {
     if (stagedFiles.length)
-      handleWarn('当前有尚未暂存的更改\n')
+      console.log(formatWarning(config.messages.hasUnstagedChanges))
     else
-      handleWarn('暂存区为空，但检测到有尚未暂存的更改\n')
+      console.log(formatWarning(config.messages.hasUnstagedChangesButEmptyStage))
+    console.log()
 
     const { toStage } = await prompts({
       type: 'confirm',
       name: 'toStage',
-      message: '需要暂存某些文件的更改吗？',
+      message: config.messages.confirmStageChanges,
       initial: true,
       onState({ aborted }) {
-        if (aborted) {
-          handleError('\n程序中断')
-          handleExit()
-        }
+        aborted && exitWithError('')
       },
     }) as { toStage: boolean }
 
     console.log()
-    if (!toStage && !stagedFiles.length) {
-      handleError('暂存区为空，暂无文件可提交')
-      handleExit()
-    }
+    if (!toStage && !stagedFiles.length)
+      exitWithError(config.messages.emptyStage)
 
     const { seletedFiles } = toStage
       ? await prompts({
         type: 'multiselect',
         name: 'seletedFiles',
-        message: `请选择需要暂存的文件`,
+        message: config.messages.selectChangesToStage,
         instructions: false,
-        // hint: `使用${pc.underline(' Space键 ')}切换选中状态，` + `使用${pc.underline(' A键 ')}切换全选状态，` + `使用${pc.underline(' Enter键 ')}确认`,
         min: 1,
-        choices: unstagedFiles.map(({ file, status }) => ({
-          title: `${formatStatus(status)} ${file}`,
-          value: { file, status },
+        choices: unstagedFiles.map(file => ({
+          title: formatFileStatus(file),
+          value: file,
           selected: true,
         })),
         onState({ aborted }) {
-          if (aborted) {
-            handleError('\n程序中断')
-            handleExit()
-          }
+          aborted && exitWithErrorInterrupted()
         },
       })
       : { seletedFiles: [] }
@@ -123,60 +128,53 @@ export async function runCommitCli() {
   const { commitType } = await prompts({
     type: 'select',
     name: 'commitType',
-    message: '请选择提交类型',
+    message: config.messages.selectCommitType,
     instructions: false,
-    limit: 11,
     choices: config.types,
     onState({ aborted }) {
-      if (aborted) {
-        handleError('\n程序中断')
-        handleExit()
-      }
+      aborted && exitWithErrorInterrupted()
     },
   })
   console.log()
 
-  const { toFillScope } = await prompts({
-    type: 'confirm',
-    name: 'toFillScope',
-    message: '是否需要填写本次提交的作用域？',
-    initial: false,
+  let { scope } = await prompts({
+    type: 'select',
+    name: 'scope',
+    message: config.messages.selectScope,
+    choices: [
+      ...config.scopes.map(scope => ({ title: scope, value: scope })),
+      { title: '──────────', heading: true },
+      { title: 'empty', value: EMPTY_SCOPE },
+      { title: 'custom', value: CUSTOM_SCOPE },
+    ],
     onState({ aborted }) {
-      if (aborted) {
-        handleError('\n程序中断')
-        handleExit()
-      }
+      aborted && exitWithErrorInterrupted()
     },
-  }) as { toFillScope: boolean }
-  toFillScope && console.log()
+  }) as { scope: string }
+  console.log()
 
-  const { scope } = toFillScope
-    ? await prompts({
+  if (scope === CUSTOM_SCOPE) {
+    const { customScope } = await prompts({
       type: 'text',
-      name: 'scope',
-      message: '请输入本次提交的作用域',
+      name: 'customScope',
+      message: config.messages.enterCustomScope,
       initial: '',
       onState({ aborted }) {
-        if (aborted) {
-          handleError('\n程序中断')
-          handleExit()
-        }
+        aborted && exitWithErrorInterrupted()
       },
-    }) as { scope: string }
-    : { scope: '' }
+    })
+    scope = customScope
+    console.log()
+  }
 
-  console.log()
   const { description } = await prompts({
     type: 'text',
     name: 'description',
-    message: '请输入本次提交的描述',
+    message: config.messages.enterDescription,
     initial: '',
-    validate: (value: string) => value.trim() !== '' || '描述不能为空',
+    validate: (value: string) => value.trim() !== '' || config.messages.enterDescriptionValidation,
     onState({ aborted }) {
-      if (aborted) {
-        handleError('\n程序中断')
-        handleExit()
-      }
+      aborted && exitWithErrorInterrupted()
     },
   }) as { description: string }
   console.log()
@@ -184,42 +182,38 @@ export async function runCommitCli() {
   const commitMessage = `${commitType}${scope ? `(${scope})` : ''}: ${description}`
   const commitFiles = [...stagedFiles, ...toStageFiles]
 
-  console.log(pc.bold(pc.bgCyan('提交信息')))
+  console.log(formatTitle(config.messages.commitMessage))
   console.log(pc.dim(commitMessage))
   console.log()
-  console.log(pc.bold(pc.bgCyan('提交文件')))
-  commitFiles.forEach(({ file, status }) => {
-    console.log(`${pc.bold(formatStatus(status))} ${pc.dim(file)}`)
+  console.log(formatTitle(config.messages.commitChanges))
+  commitFiles.forEach((file) => {
+    console.log(formatFileStatus(file))
   })
   console.log()
 
   const { toCommit } = await prompts({
     type: 'confirm',
     name: 'toCommit',
-    message: '是否确认提交？',
+    message: config.messages.confirmCommit,
     initial: true,
     onState({ aborted }) {
-      if (aborted) {
-        handleError('\n程序中断')
-        handleExit()
-      }
+      aborted && exitWithErrorInterrupted()
     },
   }) as { toCommit: boolean }
 
-  if (!toCommit)
-    handleExit()
+  !toCommit && exitWithError('Refusing to commit. Exiting...')
 
-  stageFiles(toStageFiles.map(({ file }) => file)) && commit(commitMessage) ? handleSuccess('提交成功') : handleError('提交失败')
+  stageFiles(toStageFiles.map(({ name, path }) => `${path}/${name}`)) && commit(commitMessage) ? formatSuccess('提交成功') : formatError('提交失败')
 }
 
 export async function runCli() {
   const parsedArgv = parseArgs(process.argv.slice(2))
 
   if (parsedArgv.version)
-    console.log(handleVersion())
+    console.log(generateVersion())
 
   else if (parsedArgv.help)
-    console.log(handleHelp())
+    console.log(generateHelp())
 
   else
     runCommitCli()

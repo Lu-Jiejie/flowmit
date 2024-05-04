@@ -1,3 +1,4 @@
+import { basename, dirname } from 'node:path'
 import type { FileInfo } from './types'
 import { execCommand } from './utils'
 
@@ -21,7 +22,8 @@ export function getUntrackedFiles(): FileInfo[] {
   const result = execCommand('git ls-files --others --exclude-standard')
   if (isUndefined(result))
     return []
-  return result.split('\n').filter(row => row.trim() !== '').map(file => ({ file, status: 'U' }))
+  return result.split('\n').filter(row => row.trim() !== '')
+    .map(file => ({ name: basename(file), path: basename(file), status: 'U' }))
 }
 
 export function getUnstagedTrackedFiles(): FileInfo[] {
@@ -30,7 +32,7 @@ export function getUnstagedTrackedFiles(): FileInfo[] {
     return []
   return result.split('\n').filter(row => row.trim() !== '').map((row) => {
     const [status, file] = row.trim().split(/\s+/)
-    return { status: status === '??' ? 'U' : status, file } as FileInfo
+    return { status: status === '??' ? 'U' : status, name: basename(file), path: dirname(file) } as FileInfo
   })
 }
 
@@ -40,22 +42,12 @@ export function getStagedFiles(): FileInfo[] {
     return []
   return result.split('\n').filter(row => row.trim() !== '').map((row) => {
     const [status, file] = row.trim().split(/\s+/)
-    return { status: status === '??' ? 'U' : status, file } as FileInfo
+    return { status: status === '??' ? 'U' : status, name: basename(file), path: dirname(file) } as FileInfo
   })
 }
 
 export function getUnstagedFiles(): FileInfo[] {
   return [...getUnstagedTrackedFiles(), ...getUntrackedFiles()]
-}
-
-export function getFilesInfo(): FileInfo[] {
-  const result = execCommand('git status --porcelain')
-  if (isUndefined(result))
-    return []
-  return result.split('\n').map((row) => {
-    const [status, file] = row.trim().split(/\s+/)
-    return { status: status === '??' ? 'U' : status, file } as FileInfo
-  })
 }
 
 export function getBranchName() {
