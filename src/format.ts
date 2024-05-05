@@ -24,8 +24,8 @@ export function formatTitle(text: string) {
 export function formatFileStatus(file: FileInfo) {
   const { name, path, status } = file
   let statusStr = ''
-  let nameStr = name
-  let pathStr = path === '.' ? '' : path
+  const formatPath = path === '.' ? '' : `${path}/`
+  let namePath = `${pc.gray(formatPath)}${name}`
   switch (status) {
     case 'A':
       statusStr = pc.green(status)
@@ -38,12 +38,10 @@ export function formatFileStatus(file: FileInfo) {
       break
     case 'D':
       statusStr = pc.red(status)
-      nameStr = pc.strikethrough(name)
-      pathStr = pc.strikethrough(path)
+      namePath = pc.strikethrough(namePath)
       break
     default:
       statusStr = pc.yellow(status)
   }
-
-  return `${statusStr}  ${nameStr} ${pc.gray(pathStr)}`
+  return `${statusStr}  ${namePath}`
 }

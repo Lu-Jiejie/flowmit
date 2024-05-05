@@ -36,9 +36,7 @@ export function getUntrackedFiles(): FileInfo[] {
   if (isUndefined(result))
     return []
   return result.split('\n').filter(row => row.trim() !== '')
-    .map((file) => {
-      return { status: 'U', name: basename(file), path: dirname(file) }
-    })
+    .map(file => ({ status: 'U', name: basename(file), path: dirname(file) }))
 }
 
 export function getUnstagedTrackedFiles(): FileInfo[] {
