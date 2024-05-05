@@ -2,7 +2,7 @@ import process from 'node:process'
 import prompts from 'prompts-plus'
 import pc from 'picocolors'
 import { formatError, formatFileStatus, formatSuccess, formatTitle, formatWarning } from './format'
-import { generateHelp, generateVersion } from './generate'
+import { generateCommitMessage, generateHelp, generateVersion } from './generate'
 import { parseArgs } from './parse'
 import { commit, getBranchName, getStagedFiles, getUnstagedFiles, initGitRepository, isGitInstalled, isInGitRepository, stageFiles } from './git'
 import type { FileInfo } from './types'
@@ -21,8 +21,8 @@ function exitWithErrorInterrupted() {
 
 export async function runCommitCli() {
   const INDENT = '  '
-  const EMPTY_SCOPE = '###EMPTY###'
   const CUSTOM_SCOPE = '###CUSTOM###'
+  const COMMIT_MESSAGE_SPLITTER = '###──────────────────────────────────────────###'
   const config = await getConfig()
 
   // check if git is installed
@@ -90,16 +90,18 @@ export async function runCommitCli() {
     console.log()
 
     const { toStage } = await prompts({
-      type: 'confirm',
+      type: 'toggle',
       name: 'toStage',
+      active: 'yes',
+      inactive: 'no',
       message: config.messages.Prompts_ConfirmStageChanges,
       initial: true,
       onState({ aborted }) {
         aborted && exitWithError('')
       },
     }) as { toStage: boolean }
-
     console.log()
+
     if (!toStage && !stagedFiles.length)
       exitWithError(config.messages.Message_EmptyStage)
 
@@ -108,8 +110,8 @@ export async function runCommitCli() {
         type: 'multiselect',
         name: 'seletedFiles',
         message: config.messages.Prompts_SelectChangesToStage,
-        instructions: false,
         min: 1,
+        instructions: false,
         choices: unstagedFiles.map(file => ({
           title: formatFileStatus(file),
           value: file,
@@ -121,7 +123,6 @@ export async function runCommitCli() {
       })
       : { seletedFiles: [] }
     console.log()
-
     toStageFiles.push(...seletedFiles)
   }
 
@@ -143,9 +144,17 @@ export async function runCommitCli() {
     message: config.messages.Prompts_SelectScope,
     choices: [
       ...config.scopes.map(scope => ({ title: scope, value: scope })),
-      { title: '──────────', heading: true },
-      { title: 'empty', value: EMPTY_SCOPE },
-      { title: 'custom', value: CUSTOM_SCOPE },
+      ...(config.scopes.length
+        ? [
+            { title: '──────────', heading: true },
+            { title: 'empty', value: '' },
+            { title: 'custom', value: CUSTOM_SCOPE },
+          ]
+        : [
+            { title: 'empty', value: '' },
+            { title: 'custom', value: CUSTOM_SCOPE },
+          ]),
+
     ],
     onState({ aborted }) {
       aborted && exitWithErrorInterrupted()
@@ -167,23 +176,36 @@ export async function runCommitCli() {
     console.log()
   }
 
-  const { description } = await prompts({
+  const { subject } = await prompts({
     type: 'text',
-    name: 'description',
-    message: config.messages.Prompts_EnterDescription,
+    name: 'subject',
+    message: `${config.messages.Prompts_EnterSubject}\n`,
     initial: '',
-    validate: (value: string) => value.trim() !== '' || config.messages.Validation_EnterDescription,
+    validate: (value: string) => value.trim() !== '' || config.messages.Validation_EnterSubject,
     onState({ aborted }) {
       aborted && exitWithErrorInterrupted()
     },
-  }) as { description: string }
+  }) as { subject: string }
   console.log()
 
-  const commitMessage = `${commitType}${scope ? `(${scope})` : ''}: ${description}`
+  const { body } = await prompts({
+    type: 'text',
+    name: 'body',
+    message: `${config.messages.Prompts_EnterBody}\n`,
+    initial: '',
+    onState({ aborted }) {
+      aborted && exitWithErrorInterrupted()
+    },
+  }) as { body: string }
+  console.log()
+
   const commitFiles = [...stagedFiles, ...toStageFiles]
+  const commitMessage = generateCommitMessage(commitType, scope, subject, body)
 
   console.log(formatTitle(config.messages.Title_CommitMessage))
-  console.log(pc.dim(commitMessage))
+  console.log(COMMIT_MESSAGE_SPLITTER)
+  console.log(commitMessage.display)
+  console.log(COMMIT_MESSAGE_SPLITTER)
   console.log()
   console.log(formatTitle(config.messages.Title_CommitChanges))
   commitFiles.forEach((file) => {
@@ -192,8 +214,10 @@ export async function runCommitCli() {
   console.log()
 
   const { toCommit } = await prompts({
-    type: 'confirm',
+    type: 'toggle',
     name: 'toCommit',
+    active: 'yes',
+    inactive: 'no',
     message: config.messages.Prompts_ConfirmCommit,
     initial: true,
     onState({ aborted }) {
@@ -203,7 +227,11 @@ export async function runCommitCli() {
 
   !toCommit && exitWithError('Refusing to commit. Exiting...')
 
-  stageFiles(toStageFiles.map(({ name, path }) => `${path}/${name}`)) && commit(commitMessage) ? formatSuccess('提交成功') : formatError('提交失败')
+  stageFiles(toStageFiles.map(({ name, path }) => `${path}/${name}`))
+  if (commit(commitMessage.raw))
+    console.log(formatSuccess(config.messages.Message_CommitSuccess))
+  else
+    console.log(formatError(config.messages.Message_CommitFailed))
 }
 
 export async function runCli() {

@@ -1,6 +1,15 @@
 import { basename, dirname } from 'node:path'
+import { execSync, spawnSync } from 'node:child_process'
 import type { FileInfo } from './types'
-import { execCommand } from './utils'
+
+export function execCommand(command: string) {
+  try {
+    return execSync(command, { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim()
+  }
+  catch {
+    return undefined
+  }
+}
 
 function isUndefined(value: any) {
   return typeof value === 'undefined'
@@ -65,6 +74,10 @@ export function stageFiles(files: string[]) {
 }
 
 export function commit(message: string) {
-  const result = execCommand(`git commit -m "${message}"`)
+  const result = spawnSync('git', ['commit', '-F', '-'], {
+    input: message,
+    encoding: 'utf-8',
+    stdio: ['pipe', 'pipe', 'ignore'],
+  })
   return !isUndefined(result)
 }

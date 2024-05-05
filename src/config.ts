@@ -2,7 +2,21 @@ import path from 'node:path'
 import process from 'node:process'
 import fs from 'node:fs'
 import { pathToFileURL } from 'node:url'
-import type { Config } from './types'
+import pc from 'picocolors'
+
+export interface Config {
+  /** commit types */
+  types?: {
+    /** commit types title that would be shown */
+    title: string
+    /** commit types value that would be used in commit message */
+    value: string
+    /** commit types description that would be shown */
+    description: string
+  }[]
+  scopes?: string[]
+  language?: 'en' | 'zh'
+}
 
 export const defaultTypes = [
   { title: 'feat', value: 'feat', description: 'Introduce a new feature' },
@@ -41,13 +55,16 @@ export interface I18N {
   Prompts_SelectCommitType: string
   Prompts_SelectScope: string
   Prompts_EnterCustomScope: string
-  Prompts_EnterDescription: string
-  Validation_EnterDescription: string
+  Prompts_EnterSubject: string
+  Validation_EnterSubject: string
+  Prompts_EnterBody: string
 
   Title_CommitMessage: string
   Title_CommitChanges: string
 
   Prompts_ConfirmCommit: string
+  Message_CommitSuccess: string
+  Message_CommitFailed: string
 }
 
 export const ZH: I18N = {
@@ -66,12 +83,15 @@ export const ZH: I18N = {
   Prompts_SelectChangesToStage: '请选择需要暂存的更改',
   Prompts_SelectCommitType: '请选择提交类型',
   Prompts_SelectScope: '请选择本次提交的作用域',
-  Prompts_EnterCustomScope: '请输入自定义作用域',
-  Prompts_EnterDescription: '请输入本次提交的描述',
-  Validation_EnterDescription: '描述不能为空',
+  Prompts_EnterCustomScope: '请输入本次提交的作用域',
+  Prompts_EnterSubject: `请输入${pc.underline('简短')}的描述作为提交标题`,
+  Prompts_EnterBody: `请输入${pc.underline('详细')}的描述作为提交正文${pc.yellow('（可选）')}。使用 "\\n" 换行`,
+  Validation_EnterSubject: '提交标题不能为空',
   Title_CommitMessage: '提交信息',
   Title_CommitChanges: '提交更改',
   Prompts_ConfirmCommit: '确认提交？',
+  Message_CommitSuccess: '提交成功',
+  Message_CommitFailed: '提交失败',
 }
 
 export const EN: I18N = {
@@ -91,11 +111,14 @@ export const EN: I18N = {
   Prompts_SelectCommitType: 'Please select the commit type',
   Prompts_SelectScope: 'Please select the scope of this commit',
   Prompts_EnterCustomScope: 'Please enter a custom scope',
-  Prompts_EnterDescription: 'Please enter the description of this commit',
-  Validation_EnterDescription: 'Description cannot be empty',
+  Prompts_EnterSubject: `Please enter a ${pc.underline('SHORT')} description as the commit subject`,
+  Validation_EnterSubject: 'The commit subject cannot be empty',
+  Prompts_EnterBody: `Please enter a ${pc.underline('DETAILED')} description as the commit body ${pc.yellow('(optional)')}. Use "\\n" to separate lines.`,
   Title_CommitMessage: 'Commit message',
   Title_CommitChanges: 'Commit changes',
-  Prompts_ConfirmCommit: 'Confirm commit?',
+  Prompts_ConfirmCommit: 'Are you sure you want to commit with the above message?',
+  Message_CommitSuccess: 'Commit successful',
+  Message_CommitFailed: 'Commit failed',
 }
 
 export function defineConfig(config: Config) {
