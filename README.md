@@ -1,6 +1,7 @@
 # flowmit
 
 [![NPM Version](https://img.shields.io/npm/v/flowmit?style=flat&label=%20)](https://www.npmjs.com/package/flowmit)
+
 English | [简体中文](./README.zh-CN.md)
 
 ~~*git commit -m "🦄"*~~
