@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      jiti:
+        specifier: ^1.21.0
+        version: 1.21.0
       minimist:
         specifier: ^1.2.8
         version: 1.2.8

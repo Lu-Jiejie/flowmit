@@ -5,5 +5,6 @@ export default defineConfig({
     // { title: 'feat', value: 'feat', description: '新功能' },
     // { title: 'fix', value: 'fix', description: '修复 bug' },
   ],
-  scopes: ['core', 'cli', 'config', 'utils', 'test'],
+  scopes: [],
+  dry: true,
 })

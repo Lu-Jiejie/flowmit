@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { execCommand } from '../src/utils'
+import { execCommand } from '../src/git'
 
 describe('execCommand', () => {
   it('should return the git version when the command is "git --version"', async () => {

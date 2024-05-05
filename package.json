@@ -51,6 +51,7 @@
     "cli": "esno src/cli.ts"
   },
   "dependencies": {
+    "jiti": "^1.21.0",
     "minimist": "^1.2.8",
     "picocolors": "^1.0.0",
     "prompts-plus": "^3.0.3"

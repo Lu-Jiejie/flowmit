@@ -3,6 +3,7 @@ import process from 'node:process'
 import fs from 'node:fs'
 import { pathToFileURL } from 'node:url'
 import pc from 'picocolors'
+import { tryRequire } from './utils'
 
 export interface Options {
   /** commit types */
@@ -75,7 +76,7 @@ export interface I18N {
 }
 
 export const ZH: I18N = {
-  Message_GitNotInstalled: '未检测到 git，请先安装 git',
+  Message_GitNotInstalled: '未检测到 git，请先安装 git：https://git-scm.com/downloads',
   Message_NotGitRepo: '当前目录不是 git 仓库，请先初始化 git 仓库',
   Prompts_ConfirmInitGitRepo: '是否初始化 git 仓库？',
   Message_InitGitRepoSuccess: '初始化 git 仓库成功',
@@ -136,28 +137,9 @@ export function defineConfig(config: Partial<Options>) {
   return config
 }
 
-export async function _getConfig(pkgAliasName: string = 'fm'): Promise<Partial<Options>> {
-  const rcName = `.${pkgAliasName}rc`
-  const jsName = `${pkgAliasName}.config.js`
-
-  // search in current cwd
-  const cwd = process.cwd()
-  const cwdJsPath = path.resolve(cwd, jsName)
-  const cwdRcPath = path.resolve(cwd, rcName)
-  if (fs.existsSync(cwdJsPath))
-    return (await import((pathToFileURL(cwdJsPath).href))).default || {}
-  if (fs.existsSync(cwdRcPath))
-    return JSON.parse(fs.readFileSync(cwdRcPath, 'utf-8')) || {}
-
-  // search in global
-  const customRcPath = process.env.FM_CONFIG_PATH
-  const home = process.platform === 'win32' ? process.env.USERPROFILE : process.env.HOME
-  const defaultRcPath = path.join(home || '~/', rcName)
-  const globalRcPath = customRcPath || defaultRcPath
-  if (fs.existsSync(globalRcPath))
-    return JSON.parse(fs.readFileSync(globalRcPath, 'utf-8')) || {}
-
-  return {}
+export async function _getConfig(): Promise<Partial<Options>> {
+  const cwdConfig = tryRequire('./flowmit.config', process.cwd())
+  return cwdConfig
 }
 
 export async function getConfig() {
