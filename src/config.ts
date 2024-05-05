@@ -4,9 +4,9 @@ import fs from 'node:fs'
 import { pathToFileURL } from 'node:url'
 import pc from 'picocolors'
 
-export interface Config {
+export interface Options {
   /** commit types */
-  types?: {
+  types: {
     /** commit types title that would be shown */
     title: string
     /** commit types value that would be used in commit message */
@@ -15,11 +15,11 @@ export interface Config {
     description: string
   }[]
   /** the scopes of the commit */
-  scopes?: string[]
+  scopes: string[]
   /** i18n messages */
-  language?: 'en' | 'zh'
+  language: 'en' | 'zh'
   /** only copy the commit message to clipboard, instead of commit */
-  dry?: boolean
+  dry: boolean
 }
 
 export const defaultTypes = [
@@ -132,11 +132,11 @@ export const EN: I18N = {
   Message_DryRunEnd: 'The commit message has been generated.',
 }
 
-export function defineConfig(config: Config) {
+export function defineConfig(config: Partial<Options>) {
   return config
 }
 
-export async function _getConfig(pkgAliasName: string = 'fm'): Promise<Config> {
+export async function _getConfig(pkgAliasName: string = 'fm'): Promise<Partial<Options>> {
   const rcName = `.${pkgAliasName}rc`
   const jsName = `${pkgAliasName}.config.js`
 

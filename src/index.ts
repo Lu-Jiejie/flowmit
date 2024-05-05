@@ -1,5 +1,1 @@
-import { getConfig } from './config'
-
-const config = await getConfig()
-
-console.log(config)
+export { type Options, defineConfig } from './config'
