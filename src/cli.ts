@@ -1,12 +1,14 @@
 import process from 'node:process'
 import prompts from 'prompts-plus'
-import pc from 'picocolors'
 import { formatError, formatFileStatus, formatSuccess, formatTitle, formatWarning } from './format'
 import { generateCommitMessage, generateHelp, generateVersion } from './generate'
 import { parseArgs } from './parse'
 import { commit, getBranchName, getStagedFiles, getUnstagedFiles, initGitRepository, isGitInstalled, isInGitRepository, stageFiles } from './git'
-import type { FileInfo } from './types'
+import type { FileInfo, UnPromisify } from './types'
 import { getConfig } from './config'
+
+const CUSTOM_SCOPE = '###CUSTOM###'
+const COMMIT_MESSAGE_SPLITTER = '###──────────────────────────────────────────###'
 
 function exitWithError(message: string) {
   console.log()
@@ -19,12 +21,7 @@ function exitWithErrorInterrupted() {
   exitWithError('Process interrupted. Exiting...')
 }
 
-export async function runCommitCli() {
-  const INDENT = '  '
-  const CUSTOM_SCOPE = '###CUSTOM###'
-  const COMMIT_MESSAGE_SPLITTER = '###──────────────────────────────────────────###'
-  const config = await getConfig()
-
+async function checkGit_Cli(config: UnPromisify<typeof getConfig>) {
   // check if git is installed
   if (!isGitInstalled()) {
     console.log(formatWarning(config.messages.Message_GitNotInstalled))
@@ -52,7 +49,9 @@ export async function runCommitCli() {
     console.log(formatSuccess(config.messages.Message_InitGitRepoSuccess))
     console.log()
   }
+}
 
+async function stageChanges_Cli(config: UnPromisify<typeof getConfig>) {
   const branchName = getBranchName() || 'Detached HEAD'
   const stagedFiles = getStagedFiles()
   const unstagedFiles = getUnstagedFiles()
@@ -61,13 +60,13 @@ export async function runCommitCli() {
     exitWithError(config.messages.Message_NoChangesToCommit)
 
   console.log(formatTitle(config.messages.Title_CurrentBranch))
-  console.log(`${INDENT}${branchName}`)
+  console.log(`${branchName}`)
   console.log()
 
   if (stagedFiles.length) {
     console.log(formatTitle(config.messages.Title_StagedChanges))
     stagedFiles.forEach((file) => {
-      console.log(INDENT + formatFileStatus(file))
+      console.log(formatFileStatus(file))
     })
     console.log()
   }
@@ -75,7 +74,7 @@ export async function runCommitCli() {
   if (unstagedFiles.length) {
     console.log(formatTitle(config.messages.Title_UnstagedChanges))
     unstagedFiles.forEach((file) => {
-      console.log(INDENT + formatFileStatus(file))
+      console.log(formatFileStatus(file))
     })
     console.log()
   }
@@ -125,7 +124,13 @@ export async function runCommitCli() {
     console.log()
     toStageFiles.push(...seletedFiles)
   }
+  return {
+    stagedFiles,
+    toStageFiles,
+  }
+}
 
+async function generateCommitMessage_Cli(config: UnPromisify<typeof getConfig>) {
   const { commitType } = await prompts({
     type: 'select',
     name: 'commitType',
@@ -199,20 +204,29 @@ export async function runCommitCli() {
   }) as { body: string }
   console.log()
 
-  const commitFiles = [...stagedFiles, ...toStageFiles]
   const commitMessage = generateCommitMessage(commitType, scope, subject, body)
 
+  return commitMessage
+}
+
+function displayCommitMessage(config: UnPromisify<typeof getConfig>, commitMessage: ReturnType<typeof generateCommitMessage>,
+) {
   console.log(formatTitle(config.messages.Title_CommitMessage))
   console.log(COMMIT_MESSAGE_SPLITTER)
   console.log(commitMessage.display)
   console.log(COMMIT_MESSAGE_SPLITTER)
   console.log()
+}
+
+function displayCommitChanges(config: UnPromisify<typeof getConfig>, stagedFiles: FileInfo[], toStageFiles: FileInfo[]) {
   console.log(formatTitle(config.messages.Title_CommitChanges))
-  commitFiles.forEach((file) => {
+  ;[...stagedFiles, ...toStageFiles].forEach((file) => {
     console.log(formatFileStatus(file))
   })
   console.log()
+}
 
+async function commit_Cli(config: UnPromisify<typeof getConfig>, toStageFiles: FileInfo[], commitMessage: ReturnType<typeof generateCommitMessage>) {
   const { toCommit } = await prompts({
     type: 'toggle',
     name: 'toCommit',
@@ -234,6 +248,33 @@ export async function runCommitCli() {
     console.log(formatError(config.messages.Message_CommitFailed))
 }
 
+export async function runCommitCli(options: { dry: boolean }) {
+  const config = await getConfig()
+  const dry = options.dry || config.dry
+
+  // dry run
+  if (dry) {
+    console.log(formatWarning(config.messages.Message_DryRunStart))
+    console.log()
+    const commitMessage = await generateCommitMessage_Cli(config)
+    displayCommitMessage(config, commitMessage)
+    console.log(formatSuccess(config.messages.Message_DryRunEnd))
+    return
+  }
+
+  await checkGit_Cli(config)
+
+  const { stagedFiles, toStageFiles } = await stageChanges_Cli(config)
+
+  const commitMessage = await generateCommitMessage_Cli(config)
+
+  displayCommitMessage(config, commitMessage)
+
+  displayCommitChanges(config, stagedFiles, toStageFiles)
+
+  await commit_Cli(config, toStageFiles, commitMessage)
+}
+
 export async function runCli() {
   const parsedArgv = parseArgs(process.argv.slice(2))
 
@@ -242,9 +283,8 @@ export async function runCli() {
 
   else if (parsedArgv.help)
     console.log(generateHelp())
-
   else
-    runCommitCli()
+    runCommitCli({ dry: parsedArgv.dry })
 }
 
 runCli()

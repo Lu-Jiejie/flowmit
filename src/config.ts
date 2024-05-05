@@ -14,8 +14,12 @@ export interface Config {
     /** commit types description that would be shown */
     description: string
   }[]
+  /** the scopes of the commit */
   scopes?: string[]
+  /** i18n messages */
   language?: 'en' | 'zh'
+  /** only copy the commit message to clipboard, instead of commit */
+  dry?: boolean
 }
 
 export const defaultTypes = [
@@ -65,6 +69,9 @@ export interface I18N {
   Prompts_ConfirmCommit: string
   Message_CommitSuccess: string
   Message_CommitFailed: string
+
+  Message_DryRunStart: string
+  Message_DryRunEnd: string
 }
 
 export const ZH: I18N = {
@@ -92,6 +99,8 @@ export const ZH: I18N = {
   Prompts_ConfirmCommit: '确认提交？',
   Message_CommitSuccess: '提交成功',
   Message_CommitFailed: '提交失败',
+  Message_DryRunStart: 'Dry run. 仅生成提交信息，不执行 git commit',
+  Message_DryRunEnd: '提交信息已生成',
 }
 
 export const EN: I18N = {
@@ -119,6 +128,8 @@ export const EN: I18N = {
   Prompts_ConfirmCommit: 'Are you sure you want to commit with the above message?',
   Message_CommitSuccess: 'Commit successful',
   Message_CommitFailed: 'Commit failed',
+  Message_DryRunStart: 'Dry run. Only generate commit message instead of git commit.',
+  Message_DryRunEnd: 'The commit message has been generated.',
 }
 
 export function defineConfig(config: Config) {
@@ -155,6 +166,7 @@ export async function getConfig() {
     types: customConfig.types?.length ? customConfig.types : defaultTypes,
     messages: customConfig.language === 'zh' ? ZH : EN,
     scopes: customConfig.scopes || [],
+    dry: customConfig.dry || false,
   }
   return config
 }
