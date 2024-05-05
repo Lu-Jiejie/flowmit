@@ -1,37 +1,37 @@
 # flowmit
 
 [![NPM Version](https://img.shields.io/npm/v/flowmit?style=flat&label=%20)](https://www.npmjs.com/package/flowmit)
-English | [简体中文](./README.zh-CN.md)
+[English](./README.md) | 简体中文
 
 ~~*git commit -m "🦄"*~~
 
-Commit like the flow in Git. 🌊
+在 Git 中像水流一样提交。🌊
 
-This is a CLI tool that helps you stage changes, generate the commit message in a flow, and commit them in one go.
+这是一个 CLI 工具，可以帮助你在一个流程中暂存更改、生成提交消息并提交它们。
 
-## Installation
+## 安装
 
 ```bash
 npm install -g flowmit
 
-// or install in your project:
+// 或者在你的项目中安装：
 npm install -D flowmit
 ```
 
-## Usage
+## 使用
 
-Just run the alias `fm` in your terminal, then follow the instructions and you're good to go!
+只需在终端中运行别名 `fm`，然后按照提示操作即可！
 
 ```bash
 fm
 ```
 
-If you installed it in your project, you can run it with:
+如果你在你的项目中安装了它，你可以这样运行：
 
 ```bash
 npx flowmit
 ```
-Or add it to your `package.json` scripts:
+或者将其添加到你的 `package.json` 脚本中：
 
 ```json
 {
@@ -41,19 +41,19 @@ Or add it to your `package.json` scripts:
 }
 ```
 
-## Options
+## 选项
 
 ### --dry
 
-If you only want to see the commit message without committing it, you can use the `--dry` option.
+如果你只想生成提交消息而不提交它，你可以使用 `--dry` 选项。
 
 ```bash
 fm --dry
 ```
 
-## Configuration
+## 配置
 
-You can configure `flowmit` by adding a `flowmit.config.ts`/`flowmit.config.js` file in the root of your project.
+你可以通过在你的项目根目录中添加一个 `flowmit.config.ts`/`flowmit.config.js` 文件来配置 `flowmit`。
 
 ```ts
 // flowmit.config.ts
@@ -75,8 +75,8 @@ export default defineConfig({
 })
 ```
 
-## Why flowmit?
+## 为什么叫 flowmit？
 
 flow + commit = flowmit
 
-A simple equation names a tool! 😎
+一个简单的等式命名了一个工具！😎
