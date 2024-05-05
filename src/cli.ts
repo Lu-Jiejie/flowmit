@@ -108,6 +108,7 @@ async function stageChanges_Cli(config: UnPromisify<typeof getConfig>) {
       ? await prompts({
         type: 'multiselect',
         name: 'seletedFiles',
+        hint: 'a to toggle all, ←/→/space to select, ↓/↑ to navigate',
         message: config.messages.Prompts_SelectChangesToStage,
         min: 1,
         instructions: false,
