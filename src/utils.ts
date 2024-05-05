@@ -1,4 +1,3 @@
-import process from 'node:process'
 import jiti from 'jiti'
 
 export function tryRequire(name: string, path: string) {

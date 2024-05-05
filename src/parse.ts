@@ -8,7 +8,6 @@ export function parseArgs(argv: string[]) {
       v: 'version',
       V: 'version',
     },
-    boolean: true,
   })
   return parsedArgv
 }

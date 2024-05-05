@@ -1,7 +1,4 @@
-import path from 'node:path'
 import process from 'node:process'
-import fs from 'node:fs'
-import { pathToFileURL } from 'node:url'
 import pc from 'picocolors'
 import { tryRequire } from './utils'
 
@@ -17,8 +14,6 @@ export interface Options {
   }[]
   /** the scopes of the commit */
   scopes: string[]
-  /** i18n messages */
-  language: 'en' | 'zh'
   /** only copy the commit message to clipboard, instead of commit */
   dry: boolean
 }
@@ -36,7 +31,7 @@ export const defaultTypes = [
   { title: 'revert', value: 'revert', description: 'Revert a previous commit' },
 ]
 
-export interface I18N {
+export interface PromptsText {
   Message_GitNotInstalled: string
 
   Message_NotGitRepo: string
@@ -75,36 +70,7 @@ export interface I18N {
   Message_DryRunEnd: string
 }
 
-export const ZH: I18N = {
-  Message_GitNotInstalled: '未检测到 git，请先安装 git：https://git-scm.com/downloads',
-  Message_NotGitRepo: '当前目录不是 git 仓库，请先初始化 git 仓库',
-  Prompts_ConfirmInitGitRepo: '是否初始化 git 仓库？',
-  Message_InitGitRepoSuccess: '初始化 git 仓库成功',
-  Message_NoChangesToCommit: '没有需要提交的更改',
-  Title_CurrentBranch: '当前分支',
-  Title_StagedChanges: '暂存的更改',
-  Title_UnstagedChanges: '未暂存的更改',
-  Message_HasUnstagedChanges: '当前有未暂存的更改',
-  Message_HasUnstagedChangesButEmptyStage: '暂存区为空，但有未暂存的更改',
-  Prompts_ConfirmStageChanges: '需要暂存某些文件的更改吗？',
-  Message_EmptyStage: '暂存区为空，无需提交',
-  Prompts_SelectChangesToStage: '请选择需要暂存的更改',
-  Prompts_SelectCommitType: '请选择提交类型',
-  Prompts_SelectScope: '请选择本次提交的作用域',
-  Prompts_EnterCustomScope: '请输入本次提交的作用域',
-  Prompts_EnterSubject: `请输入${pc.underline('简短')}的描述作为提交标题`,
-  Prompts_EnterBody: `请输入${pc.underline('详细')}的描述作为提交正文${pc.yellow('（可选）')}。使用 "\\n" 换行`,
-  Validation_EnterSubject: '提交标题不能为空',
-  Title_CommitMessage: '提交信息',
-  Title_CommitChanges: '提交更改',
-  Prompts_ConfirmCommit: '确认提交？',
-  Message_CommitSuccess: '提交成功',
-  Message_CommitFailed: '提交失败',
-  Message_DryRunStart: 'Dry run. 仅生成提交信息，不执行 git commit',
-  Message_DryRunEnd: '提交信息已生成',
-}
-
-export const EN: I18N = {
+export const promptsText: PromptsText = {
   Message_GitNotInstalled: 'Git is not installed. Please install Git first: https://git-scm.com/downloads',
   Message_NotGitRepo: 'The current directory is not a Git repository. Please initialize a Git repository first.',
   Prompts_ConfirmInitGitRepo: 'Would you like to initialize a Git repository?',
@@ -146,7 +112,7 @@ export async function getConfig() {
   const customConfig = await _getConfig()
   const config = {
     types: customConfig.types?.length ? customConfig.types : defaultTypes,
-    messages: customConfig.language === 'zh' ? ZH : EN,
+    messages: promptsText,
     scopes: customConfig.scopes || [],
     dry: customConfig.dry || false,
   }

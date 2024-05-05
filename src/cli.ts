@@ -248,12 +248,9 @@ async function commit_Cli(config: UnPromisify<typeof getConfig>, toStageFiles: F
     console.log(formatError(config.messages.Message_CommitFailed))
 }
 
-export async function runCommitCli(options: { dry: boolean }) {
-  const config = await getConfig()
-  const dry = options.dry || config.dry
-
+export async function runCommitCli(config: UnPromisify<typeof getConfig>) {
   // dry run
-  if (dry) {
+  if (config.dry) {
     console.log(formatWarning(config.messages.Message_DryRunStart))
     console.log()
     const commitMessage = await generateCommitMessage_Cli(config)
@@ -277,14 +274,17 @@ export async function runCommitCli(options: { dry: boolean }) {
 
 export async function runCli() {
   const parsedArgv = parseArgs(process.argv.slice(2))
-
-  if (parsedArgv.version)
+  if (parsedArgv.version) {
     console.log(generateVersion())
-
-  else if (parsedArgv.help)
+  }
+  else if (parsedArgv.help) {
     console.log(generateHelp())
-  else
-    runCommitCli({ dry: parsedArgv.dry })
+  }
+  else {
+    const config = await getConfig()
+    config.dry = parsedArgv.dry || config.dry
+    runCommitCli(config)
+  }
 }
 
 runCli()

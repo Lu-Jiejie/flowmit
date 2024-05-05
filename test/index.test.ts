@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
 import jiti from 'jiti'
-import type { Options } from '../src/config'
 
 describe('test', () => {
   it('should work', () => {
