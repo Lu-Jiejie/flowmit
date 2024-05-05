@@ -14,7 +14,7 @@ export interface Options {
   }[]
   /** the scopes of the commit */
   scopes: string[]
-  /** only copy the commit message to clipboard, instead of commit */
+  /** only generate the commit message without commit */
   dry: boolean
 }
 

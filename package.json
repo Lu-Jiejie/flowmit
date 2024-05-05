@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.6",
   "packageManager": "pnpm@9.0.6",
-  "description": "help you commit more smoothly",
+  "description": "Commit like the flow in Git.",
   "author": "Lu-Jiejie <lu-jiejie@outlook.com>",
   "license": "MIT",
   "homepage": "https://github.com/Lu-Jiejie/flowmit#readme",

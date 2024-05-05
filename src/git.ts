@@ -27,6 +27,10 @@ export function initGitRepository() {
   return !isUndefined(execCommand('git init -b main'))
 }
 
+export function getGitVersion() {
+  return execCommand('git --version')?.split(' ')[2]
+}
+
 export function getUntrackedFiles(): FileInfo[] {
   const result = execCommand('git ls-files --others --exclude-standard')
   if (isUndefined(result))

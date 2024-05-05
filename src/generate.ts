@@ -1,14 +1,24 @@
 import pc from 'picocolors'
-import { version } from '../package.json'
+import { description, version } from '../package.json'
+import { getGitVersion } from './git'
 
 export function generateVersion() {
-  return `v${version}`
+  return `flowmit  ${pc.green(`v${version}`)}
+git      ${pc.blue(`v${getGitVersion()}`)}`
 }
 
 export function generateHelp() {
-  return `
-Usage: git-commit [options]
-  `
+  return `${pc.bold(pc.green('flowmit'))} ${pc.green(`v${version}`)}  ${description}
+
+Usage:
+  flowmit ${pc.gray('[options]')}
+
+Options:
+  -h, --help     display help
+  -v, --version  display version
+  --dry          only generate the commit message without commit
+
+${pc.yellow('check https://github.com/Lu-Jiejie/flowmit for more information.')}`
 }
 
 export function generateCommitMessage(commitType: string, scope: string, subject: string, body: string): { raw: string, display: string } {
