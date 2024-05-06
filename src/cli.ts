@@ -33,8 +33,10 @@ async function checkGit_Cli(config: UnPromisify<typeof getConfig>) {
     console.log(formatWarning(config.messages.Message_NotGitRepo))
     console.log()
     const { toInit } = await prompts({
-      type: 'confirm',
+      type: 'toggle',
       name: 'toInit',
+      active: 'yes',
+      inactive: 'no',
       message: config.messages.Prompts_ConfirmInitGitRepo,
       initial: true,
       onState({ aborted }) {
