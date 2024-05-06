@@ -1,7 +1,7 @@
 {
   "name": "flowmit",
   "type": "module",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "packageManager": "pnpm@9.0.6",
   "description": "Commit like the flow in Git.",
   "author": "Lu-Jiejie <lu-jiejie@outlook.com>",
