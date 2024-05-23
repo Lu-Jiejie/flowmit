@@ -50,12 +50,6 @@
     "prepare": "simple-git-hooks",
     "cli": "esno src/cli.ts"
   },
-  "dependencies": {
-    "jiti": "^1.21.0",
-    "minimist": "^1.2.8",
-    "picocolors": "^1.0.0",
-    "prompts-plus": "^3.0.3"
-  },
   "devDependencies": {
     "@antfu/eslint-config": "^2.16.1",
     "@types/minimist": "^1.2.5",
@@ -64,7 +58,11 @@
     "changelogithub": "^0.13.7",
     "eslint": "^9.1.1",
     "esno": "^4.7.0",
+    "jiti": "^1.21.0",
     "lint-staged": "^15.2.2",
+    "minimist": "^1.2.8",
+    "picocolors": "^1.0.1",
+    "prompts-plus": "^3.0.4",
     "simple-git-hooks": "^2.11.1",
     "typescript": "^5.4.5",
     "unbuild": "^2.0.0",
