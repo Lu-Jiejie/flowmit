@@ -12,7 +12,12 @@
     "url": "git+https://github.com/Lu-Jiejie/flowmit.git"
   },
   "bugs": "https://github.com/Lu-Jiejie/flowmit/issues",
-  "keywords": [],
+  "keywords": [
+    "git",
+    "commit",
+    "commit message",
+    "cli"
+  ],
   "sideEffects": false,
   "exports": {
     ".": {
@@ -73,6 +78,5 @@
   },
   "lint-staged": {
     "*": "eslint --fix"
-  },
-  "config": {}
+  }
 }
