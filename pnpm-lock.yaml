@@ -29,9 +29,6 @@ importers:
       esno:
         specifier: ^4.7.0
         version: 4.7.0
-      find-up:
-        specifier: ^7.0.0
-        version: 7.0.0
       jiti:
         specifier: ^1.21.0
         version: 1.21.0

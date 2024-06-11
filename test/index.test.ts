@@ -1,9 +1,7 @@
 import process from 'node:process'
-import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import jiti from 'jiti'
-import { findUp } from 'find-up'
-import { findUpInGitRootDir, tryRequire } from '../src/utils'
+import { findUpInGitRootDir } from '../src/utils'
 
 describe.skip('test', () => {
   it('should work', () => {
@@ -25,6 +23,6 @@ describe.skip('test', () => {
 describe('find up flowmit.config.ts', () => {
   it('should work', async () => {
     const configPath = await findUpInGitRootDir(['flowmit.config.ts', 'flowmit.config.js'])
-    expect(configPath).toMatchInlineSnapshot(``)
+    expect(configPath).toMatchInlineSnapshot(`"D:\\CODE\\mine\\flowmit\\flowmit.config.ts"`)
   })
 })

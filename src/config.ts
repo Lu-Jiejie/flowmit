@@ -1,6 +1,5 @@
 import process from 'node:process'
 import pc from 'picocolors'
-import { findUp } from 'find-up'
 import { findUpInGitRootDir, tryRequire } from './utils'
 
 export interface Options {
