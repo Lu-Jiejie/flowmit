@@ -54,7 +54,7 @@ fm --dry
 
 ## 配置
 
-你可以通过在你的项目根目录中添加一个 `flowmit.config.ts`/`flowmit.config.js` 文件来配置 `flowmit`。
+你可以通过在你的项目的~~根目录~~任何位置中添加一个 `flowmit.config.ts`/`flowmit.config.js` 文件来配置 `flowmit`。这意味着，在一个 `monorepo` 中，你可以在不同的包中建立各自的 `flowmit.config.ts`/`flowmit.config.js` 文件。
 
 ```ts
 // flowmit.config.ts

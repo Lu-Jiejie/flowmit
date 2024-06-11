@@ -57,7 +57,7 @@ fm --dry
 
 ## Configuration
 
-You can configure `flowmit` by adding a `flowmit.config.ts`/`flowmit.config.js` file in the root of your project.
+You can configure `flowmit` by adding a `flowmit.config.ts`/`flowmit.config.js` file ~~in the root of~~ everywhere within your project. It means that, if you are in a monorepo, you can have multiple `flowmit.config.ts`/`flowmit.config.js` files in different packages to customize the commit message for each package.
 
 ```ts
 // flowmit.config.ts
