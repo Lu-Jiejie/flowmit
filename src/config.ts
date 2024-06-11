@@ -1,6 +1,7 @@
 import process from 'node:process'
 import pc from 'picocolors'
-import { tryRequire } from './utils'
+import { findUp } from 'find-up'
+import { findUpInGitRootDir, tryRequire } from './utils'
 
 export interface Options {
   /** commit types */
@@ -104,7 +105,10 @@ export function defineConfig(config: Partial<Options>) {
 }
 
 export async function _getConfig(): Promise<Partial<Options>> {
-  const cwdConfig = tryRequire('./flowmit.config', process.cwd())
+  const configPath = await findUpInGitRootDir(['flowmit.config.ts', 'flowmit.config.js'])
+  if (!configPath)
+    return {}
+  const cwdConfig = tryRequire(configPath, process.cwd())
   return cwdConfig
 }
 
