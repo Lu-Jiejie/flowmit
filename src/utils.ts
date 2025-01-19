@@ -1,14 +1,15 @@
-import process from 'node:process'
-import path from 'node:path'
-import { stat } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
-import jiti from 'jiti'
+import { stat } from 'node:fs/promises'
+import path from 'node:path'
+import process from 'node:process'
+import { createJiti } from 'jiti'
 
-export function tryRequire(name: string, path: string) {
-  const _require = jiti(path, { interopDefault: true, esmResolve: true })
+export async function tryRequire(name: string, path: string) {
+  const _require = await createJiti(path, { interopDefault: true }).import
   try {
     return _require(name)
   }
+  // eslint-disable-next-line unused-imports/no-unused-vars
   catch (error) {
     return {}
   }
@@ -23,6 +24,7 @@ export async function findUpInGitRootDir(name: string | string[], type: 'file' |
   const gitRootDir = await getGitRootDir()
   if (!gitRootDir)
     return undefined
+
   return await findUp(name, { type, stopAt: gitRootDir })
 }
 
@@ -40,15 +42,19 @@ export async function findUp(paths: string | string[], options: FindUpOptions = 
   } = options
 
   let currentDir = cwd
-
-  while (currentDir && currentDir !== stopAt) {
+  paths = Array.isArray(paths) ? paths : [paths]
+  while (currentDir) {
     for (const p of paths) {
       const filePath = path.resolve(currentDir, p)
       if (existsSync(filePath) && (await stat(filePath)).isFile() === (type === 'file'))
         return filePath
     }
 
+    if (currentDir === stopAt)
+      break
+
     const parentDir = path.dirname(currentDir)
+
     if (parentDir === currentDir)
       break
     currentDir = parentDir

@@ -2,7 +2,7 @@
   "name": "flowmit",
   "type": "module",
   "version": "1.0.7",
-  "packageManager": "pnpm@9.3.0",
+  "packageManager": "pnpm@9.15.4",
   "description": "Commit like the flow in Git.",
   "author": "Lu-Jiejie <lu-jiejie@outlook.com>",
   "license": "MIT",
@@ -56,22 +56,22 @@
     "cli": "esno src/cli.ts"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.16.1",
+    "@antfu/eslint-config": "^3.14.0",
     "@types/minimist": "^1.2.5",
-    "@types/node": "^20.12.8",
-    "bumpp": "^9.4.1",
-    "changelogithub": "^0.13.7",
-    "eslint": "^9.1.1",
-    "esno": "^4.7.0",
-    "jiti": "^1.21.0",
-    "lint-staged": "^15.2.2",
+    "@types/node": "^20.17.14",
+    "bumpp": "^9.10.1",
+    "changelogithub": "^13.12.1",
+    "eslint": "^9.18.0",
+    "esno": "^4.8.0",
+    "jiti": "^2.4.2",
+    "lint-staged": "^15.4.1",
     "minimist": "^1.2.8",
-    "picocolors": "^1.0.1",
+    "picocolors": "^1.1.1",
     "prompts-plus": "^3.0.4",
     "simple-git-hooks": "^2.11.1",
-    "typescript": "^5.4.5",
-    "unbuild": "^2.0.0",
-    "vitest": "^1.6.0"
+    "typescript": "^5.7.3",
+    "unbuild": "^3.3.1",
+    "vitest": "^3.0.2"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged"

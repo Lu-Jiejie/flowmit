@@ -107,7 +107,7 @@ export async function _getConfig(): Promise<Partial<Options>> {
   const configPath = await findUpInGitRootDir(['flowmit.config.ts', 'flowmit.config.js'])
   if (!configPath)
     return {}
-  const cwdConfig = tryRequire(configPath, process.cwd())
+  const cwdConfig = (await tryRequire(configPath, process.cwd())) as Partial<Options>
   return cwdConfig
 }
 
