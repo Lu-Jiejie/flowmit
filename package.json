@@ -2,7 +2,7 @@
   "name": "flowmit",
   "type": "module",
   "version": "1.0.8",
-  "packageManager": "pnpm@9.15.4",
+  "packageManager": "pnpm@10.28.0",
   "description": "Commit like the flow in Git.",
   "author": "Lu-Jiejie <lu-jiejie@outlook.com>",
   "license": "MIT",
@@ -20,22 +20,8 @@
   ],
   "sideEffects": false,
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    }
-  },
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "*": [
-        "./dist/*",
-        "./dist/index.d.ts"
-      ]
-    }
+    ".": "./dist/index.mjs",
+    "./package.json": "./package.json"
   },
   "bin": {
     "fm": "./bin/cli.mjs"
@@ -44,34 +30,35 @@
     "dist"
   ],
   "scripts": {
-    "dev": "unbuild --stub",
-    "build": "unbuild",
+    "dev": "tsdown --watch",
+    "build": "tsdown",
     "lint": "eslint .",
-    "release": "bumpp && npm publish",
-    "start": "esno src/index.ts",
+    "release": "bumpp",
+    "start": "tsx src/index.ts",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "nr build",
+    "prepublishOnly": "pnpm run build",
     "prepare": "simple-git-hooks",
-    "cli": "esno src/cli.ts"
+    "cli": "tsx src/cli.ts"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^3.14.0",
+    "@antfu/eslint-config": "^7.0.1",
     "@types/minimist": "^1.2.5",
-    "@types/node": "^20.17.14",
-    "bumpp": "^9.10.1",
-    "changelogithub": "^13.12.1",
-    "eslint": "^9.18.0",
-    "esno": "^4.8.0",
-    "jiti": "^2.4.2",
-    "lint-staged": "^15.4.1",
+    "@types/node": "^20.19.29",
+    "bumpp": "^10.4.0",
+    "changelogithub": "^14.0.0",
+    "eslint": "^9.39.2",
+    "jiti": "^2.6.1",
+    "lint-staged": "^16.2.7",
     "minimist": "^1.2.8",
     "picocolors": "^1.1.1",
     "prompts-plus": "^3.0.4",
-    "simple-git-hooks": "^2.11.1",
-    "typescript": "^5.7.3",
-    "unbuild": "^3.3.1",
-    "vitest": "^3.0.2"
+    "publint": "^0.3.16",
+    "simple-git-hooks": "^2.13.1",
+    "tsdown": "0.20.0-beta.3",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.17"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged"
