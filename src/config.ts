@@ -1,6 +1,5 @@
-import process from 'node:process'
 import pc from 'picocolors'
-import { findUpInGitRootDir, tryRequire } from './utils'
+import { createConfigLoader } from 'unconfig'
 
 export interface Options {
   /** commit types */
@@ -31,46 +30,7 @@ export const defaultTypes = [
   { title: 'revert', value: 'revert', description: 'Revert a previous commit' },
 ]
 
-export interface PromptsText {
-  Message_GitNotInstalled: string
-
-  Message_NotGitRepo: string
-  Prompts_ConfirmInitGitRepo: string
-  Message_InitGitRepoSuccess: string
-
-  Message_NoChangesToCommit: string
-
-  Title_CurrentBranch: string
-
-  Title_StagedChanges: string
-  Title_UnstagedChanges: string
-
-  Message_HasUnstagedChanges: string
-  Message_HasUnstagedChangesButEmptyStage: string
-  Prompts_ConfirmStageChanges: string
-  Message_EmptyStage: string
-
-  Prompts_SelectChangesToStage: string
-
-  Prompts_SelectCommitType: string
-  Prompts_SelectScope: string
-  Prompts_EnterCustomScope: string
-  Prompts_EnterSubject: string
-  Validation_EnterSubject: string
-  Prompts_EnterBody: string
-
-  Title_CommitMessage: string
-  Title_CommitChanges: string
-
-  Prompts_ConfirmCommit: string
-  Message_CommitSuccess: string
-  Message_CommitFailed: string
-
-  Message_DryRunStart: string
-  Message_DryRunEnd: string
-}
-
-export const promptsText: PromptsText = {
+export const promptsText = {
   Message_GitNotInstalled: 'Git is not installed. Please install Git first: https://git-scm.com/downloads',
   Message_NotGitRepo: 'The current directory is not a Git repository. Please initialize a Git repository first.',
   Prompts_ConfirmInitGitRepo: 'Would you like to initialize a Git repository?',
@@ -103,21 +63,22 @@ export function defineConfig(config: Partial<Options>) {
   return config
 }
 
-export async function _getConfig(): Promise<Partial<Options>> {
-  const configPath = await findUpInGitRootDir(['flowmit.config.ts', 'flowmit.config.js'])
-  if (!configPath)
-    return {}
-  const cwdConfig = (await tryRequire(configPath, process.cwd())) as Partial<Options>
-  return cwdConfig
-}
-
 export async function getConfig() {
-  const customConfig = await _getConfig()
-  const config = {
+  const loader = createConfigLoader<Partial<Options>>({
+    sources: [
+      {
+        files: ['flowmit.config'],
+        extensions: ['ts', 'js'],
+      },
+    ],
+  })
+
+  const { config: customConfig } = await loader.load()
+
+  return {
     types: customConfig.types?.length ? customConfig.types : defaultTypes,
     messages: promptsText,
     scopes: customConfig.scopes || [],
     dry: customConfig.dry || false,
   }
-  return config
 }

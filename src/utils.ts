@@ -2,18 +2,6 @@ import { existsSync } from 'node:fs'
 import { stat } from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
-import { createJiti } from 'jiti'
-
-export async function tryRequire(name: string, path: string) {
-  const _require = await createJiti(path, { interopDefault: true }).import
-  try {
-    return _require(name)
-  }
-  // eslint-disable-next-line unused-imports/no-unused-vars
-  catch (error) {
-    return {}
-  }
-}
 
 export async function getGitRootDir(cwd = process.cwd()) {
   const gitFolder = await findUp('.git', { cwd, type: 'directory' })
