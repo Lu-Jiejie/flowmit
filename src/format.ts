@@ -1,5 +1,5 @@
-import pc from 'picocolors'
 import type { FileInfo } from './types'
+import pc from 'picocolors'
 
 export function formatWarning(text: string) {
   return `${pc.inverse(pc.yellow(' WARNING '))} ${pc.yellow(text)}`

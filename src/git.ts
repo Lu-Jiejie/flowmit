@@ -1,6 +1,6 @@
-import { basename, dirname } from 'node:path'
-import { execSync, spawnSync } from 'node:child_process'
 import type { FileInfo } from './types'
+import { execSync, spawnSync } from 'node:child_process'
+import { basename, dirname } from 'node:path'
 
 export function execCommand(command: string) {
   try {
@@ -35,8 +35,7 @@ export function getUntrackedFiles(): FileInfo[] {
   const result = execCommand('git ls-files --others --exclude-standard')
   if (isUndefined(result))
     return []
-  return result.split('\n').filter(row => row.trim() !== '')
-    .map(file => ({ status: 'U', name: basename(file), path: dirname(file) }))
+  return result.split('\n').filter(row => row.trim() !== '').map(file => ({ status: 'U', name: basename(file), path: dirname(file) }))
 }
 
 export function getUnstagedTrackedFiles(): FileInfo[] {

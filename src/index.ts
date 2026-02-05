@@ -1,1 +1,1 @@
-export { type Options, defineConfig } from './config'
+export { defineConfig, type Options } from './config'

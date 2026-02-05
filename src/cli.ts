@@ -1,11 +1,11 @@
+import type { FileInfo, UnPromisify } from './types'
 import process from 'node:process'
 import prompts from 'prompts-plus'
+import { getConfig } from './config'
 import { formatError, formatFileStatus, formatSuccess, formatTitle, formatWarning } from './format'
 import { generateCommitMessage, generateHelp, generateVersion } from './generate'
-import { parseArgs } from './parse'
 import { commit, getBranchName, getStagedFiles, getUnstagedFiles, initGitRepository, isGitInstalled, isInGitRepository, stageFiles } from './git'
-import type { FileInfo, UnPromisify } from './types'
-import { getConfig } from './config'
+import { parseArgs } from './parse'
 
 const CUSTOM_SCOPE = '###CUSTOM###'
 const COMMIT_MESSAGE_SPLITTER = '###──────────────────────────────────────────###'
@@ -108,21 +108,21 @@ async function stageChanges_Cli(config: UnPromisify<typeof getConfig>) {
 
     const { seletedFiles } = toStage
       ? await prompts({
-        type: 'multiselect',
-        name: 'seletedFiles',
-        hint: 'a to toggle all, ←/→/space to select, ↓/↑ to navigate',
-        message: config.messages.Prompts_SelectChangesToStage,
-        min: 1,
-        instructions: false,
-        choices: unstagedFiles.map(file => ({
-          title: formatFileStatus(file),
-          value: file,
-          selected: true,
-        })),
-        onState({ aborted }) {
-          aborted && exitWithErrorInterrupted()
-        },
-      })
+          type: 'multiselect',
+          name: 'seletedFiles',
+          hint: 'a to toggle all, ←/→/space to select, ↓/↑ to navigate',
+          message: config.messages.Prompts_SelectChangesToStage,
+          min: 1,
+          instructions: false,
+          choices: unstagedFiles.map(file => ({
+            title: formatFileStatus(file),
+            value: file,
+            selected: true,
+          })),
+          onState({ aborted }) {
+            aborted && exitWithErrorInterrupted()
+          },
+        })
       : { seletedFiles: [] }
     console.log()
     toStageFiles.push(...seletedFiles)
